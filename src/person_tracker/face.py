@@ -103,10 +103,13 @@ def extract_track_faces(
     with tracked people in the frame.
 
     No minimum confidence or minimum face-size filtering is applied.
+
+    ``max_faces`` is forwarded to InsightFace so the recognition and landmark
+    models do not process faces that would only be discarded afterward.
     """
     candidates = []
 
-    for face in face_app.get(frame):
+    for face in face_app.get(frame, max_num=max_faces):
         x1, y1, x2, y2 = face.bbox.astype(int)
 
         x1 = max(0, x1)
