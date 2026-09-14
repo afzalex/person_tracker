@@ -96,20 +96,21 @@ def extract_track_faces(
     frame_no,
     boxes,
     ids,
-    max_faces=5,
+    max_faces=0,
 ):
     """
-    Extract up to max_faces highest-confidence faces associated
-    with tracked people in the frame.
+    Extract the highest-confidence faces associated with tracked people.
+
+    A positive ``max_faces`` limits the result. Zero means unlimited.
 
     No minimum confidence or minimum face-size filtering is applied.
 
-    ``max_faces`` is forwarded to InsightFace so the recognition and landmark
-    models do not process faces that would only be discarded afterward.
+    The limit is forwarded to InsightFace so discarded faces do not consume
+    recognition work.
     """
     candidates = []
 
-    for face in face_app.get(frame, max_num=max_faces):
+    for face in face_app.get(frame, max_num=max(0, max_faces)):
         x1, y1, x2, y2 = face.bbox.astype(int)
 
         x1 = max(0, x1)
@@ -147,7 +148,9 @@ def extract_track_faces(
 
     samples = []
 
-    for confidence, face, track_id, bbox in candidates[:max_faces]:
+    selected_candidates = candidates[:max_faces] if max_faces > 0 else candidates
+
+    for confidence, face, track_id, bbox in selected_candidates:
         x1, y1, x2, y2 = bbox
 
         samples.append(
