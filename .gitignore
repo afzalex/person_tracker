@@ -27,6 +27,7 @@ env/
 # Media / data (large binary artifacts)
 input/*
 output/*
+runs/
 !input/.gitkeep
 !output/.gitkeep
 *.mp4

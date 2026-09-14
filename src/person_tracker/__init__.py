@@ -12,6 +12,12 @@ from .identity import (
     split_track_identity_anchors,
 )
 from .io import create_browser_preview, ffmpeg_available, inspect_video, read_nth_frame
+from .storage import (
+    build_run_manifest,
+    load_observation_run,
+    save_identity_resolution,
+    save_observation_run,
+)
 from .ui import create_frame_canvas, select_person_widget
 from .video import render_video, resolve_processing_range
 
@@ -35,6 +41,10 @@ __all__ = [
     "ffmpeg_available",
     "inspect_video",
     "read_nth_frame",
+    "build_run_manifest",
+    "load_observation_run",
+    "save_identity_resolution",
+    "save_observation_run",
     "create_frame_canvas",
     "select_person_widget",
     "render_video",
