@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+*.part
+
+# Caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Model weights
+*.pt
+*.pth
+*.onnx
+
+# Media / data (large binary artifacts)
+input/*
+output/*
+!input/.gitkeep
+!output/.gitkeep
+*.mp4
+*.mkv
+*.webm
+*.mov
+*.avi
+
+# OS
+.DS_Store
