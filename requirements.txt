@@ -1,0 +1,17 @@
+ultralytics
+lap>=0.5.12
+opencv-python
+scenedetect>=0.7,<0.8
+numpy
+matplotlib
+tqdm
+ipykernel
+jupyterlab
+ipywidgets
+ipympl
+ipycanvas
+orjson
+insightface
+onnxruntime-gpu
+scikit-learn
+pandas

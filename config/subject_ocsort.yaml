@@ -1,0 +1,23 @@
+# OCSORT settings tuned for better identity continuity when people cross.
+# This is the most practical supported alternative to BoT-SORT in the current
+# Ultralytics environment for the crossing-person issue.
+tracker_type: ocsort
+
+# Detection association. The low-confidence second pass helps keep a partly
+# hidden person attached to the current track instead of immediately creating
+# another identity.
+track_high_thresh: 0.25
+track_low_thresh: 0.10
+new_track_thresh: 0.25
+match_thresh: 0.80
+fuse_score: true
+track_buffer: 180
+
+gmc_method: sparseOptFlow
+
+# Use the detector's native appearance features to distinguish the selected
+# person from somebody crossing in front.
+with_reid: true
+model: auto
+proximity_thresh: 0.35
+appearance_thresh: 0.80

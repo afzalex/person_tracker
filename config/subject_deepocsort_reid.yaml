@@ -1,0 +1,27 @@
+# Deep OC-SORT settings using the dedicated yolo26m-reid.onnx embedding model
+# instead of native detector features, for stronger appearance matching on
+# crossing subjects. Ultralytics auto-downloads this asset on first use.
+tracker_type: deepocsort
+
+# Detection association. A slightly higher track threshold keeps the selected
+# person attached through brief occlusion while still allowing new tracks to be
+# created when a person truly exits and reappears.
+track_high_thresh: 0.30
+track_low_thresh: 0.10
+new_track_thresh: 0.35
+match_thresh: 0.80
+fuse_score: true
+
+# Keep a temporarily hidden identity alive for a few seconds to reduce ID churn
+# when a subject and another person overlap or pass in front of each other.
+track_buffer: 45
+
+gmc_method: sparseOptFlow
+
+# Dedicated ReID model gives embeddings independent of the detector backbone,
+# which is usually more discriminative than native detector features.
+with_reid: true
+model: yolo26m-reid.onnx
+proximity_thresh: 0.45
+appearance_thresh: 0.98
+alpha_fixed_emb: 0.97

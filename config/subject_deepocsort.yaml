@@ -1,0 +1,27 @@
+# Deep OC-SORT settings tuned for crossing-person identity stability.
+# This tracker is available in the current Ultralytics environment and is a
+# stronger upgrade path from OCSORT when Re-ID and appearance matching matter.
+tracker_type: deepocsort
+
+# Detection association. A slightly higher track threshold keeps the selected
+# person attached through brief occlusion while still allowing new tracks to be
+# created when a person truly exits and reappears.
+track_high_thresh: 0.30
+track_low_thresh: 0.10
+new_track_thresh: 0.35 #0.25
+match_thresh: 0.80
+fuse_score: true
+
+# Keep a temporarily hidden identity alive for a few seconds to reduce ID churn
+# when a subject and another person overlap or pass in front of each other.
+track_buffer: 45 #180
+
+gmc_method: sparseOptFlow
+
+# Deep OC-SORT supports appearance matching for Re-ID. This is the main reason
+# it is more stable than plain OCSORT for crossing subjects.
+with_reid: true
+model: auto
+proximity_thresh: 0.45 #0.35
+appearance_thresh: 0.92 #0.80
+alpha_fixed_emb: 0.97 #0.95

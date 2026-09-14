@@ -1,0 +1,27 @@
+# BoT-SORT settings tuned for following one person through foreground occlusion.
+# Track IDs remain scene-local because the notebook resets the tracker at cuts.
+tracker_type: botsort
+
+# Detection association. The low-confidence second pass helps keep a partly
+# hidden person attached to the existing track instead of immediately creating
+# another identity.
+track_high_thresh: 0.25
+track_low_thresh: 0.10
+new_track_thresh: 0.25
+match_thresh: 0.80
+fuse_score: true
+
+# Keep a temporarily hidden identity alive for many tracker updates. With the
+# notebook's default stride of 2 on a 60 fps video, 180 updates is about 6 sec.
+track_buffer: 180
+
+# Compensate for camera movement before associating person boxes.
+gmc_method: sparseOptFlow
+
+# Use the detector's native appearance features to distinguish the selected
+# person from somebody crossing in front. This adds some tracking cost but does
+# not require a separate ReID model download for a standard YOLO Detect model.
+with_reid: true
+model: auto
+proximity_thresh: 0.35
+appearance_thresh: 0.85

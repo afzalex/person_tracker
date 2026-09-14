@@ -1,0 +1,21 @@
+# StrongSORT settings tuned for better identity continuity when people cross.
+# This is a stronger ReID-aware tracker than BoT-SORT and is intended for the
+# crossing-person case where identity swaps are the main problem.
+tracker_type: strongsort
+
+# Detection association keeps a partly hidden person attached to the current
+# identity instead of creating a new one too aggressively.
+track_high_thresh: 0.25
+track_low_thresh: 0.10
+new_track_thresh: 0.25
+match_thresh: 0.80
+fuse_score: true
+track_buffer: 180
+
+gmc_method: sparseOptFlow
+
+# StrongSORT uses appearance matching to keep identity stable across crossings.
+with_reid: true
+model: auto
+proximity_thresh: 0.35
+appearance_thresh: 0.80
