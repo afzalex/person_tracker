@@ -18,7 +18,13 @@ from .storage import (
     save_identity_resolution,
     save_observation_run,
 )
-from .ui import create_frame_canvas, select_person_widget
+from .ui import (
+    create_frame_canvas,
+    create_person_selection_widget,
+    load_selected_person,
+    save_selected_person,
+    select_person_widget,
+)
 from .video import render_video, resolve_processing_range
 
 __all__ = [
@@ -46,6 +52,9 @@ __all__ = [
     "save_identity_resolution",
     "save_observation_run",
     "create_frame_canvas",
+    "create_person_selection_widget",
+    "load_selected_person",
+    "save_selected_person",
     "select_person_widget",
     "render_video",
     "resolve_processing_range",
