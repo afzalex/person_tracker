@@ -5,9 +5,12 @@ import numpy as np
 from src.person_tracker.face import FaceSample
 from src.person_tracker.storage import (
     build_run_manifest,
+    load_latest_runs,
     load_observation_run,
+    resolve_run_directory,
     save_identity_resolution,
     save_observation_run,
+    update_latest_run,
 )
 
 
@@ -72,3 +75,27 @@ def test_observation_and_identity_storage_round_trip(tmp_path):
     assert identity["frame"] == 30
     assert identity["track_id"] == 7
     assert identity["person_id"] == 1
+
+
+def test_latest_run_registry_tracks_stages_and_resolves_precedence(tmp_path, monkeypatch):
+    runs_directory = tmp_path / "runs"
+    observation_run = runs_directory / "observation-run"
+    resolved_run = runs_directory / "resolved-run"
+    explicit_run = runs_directory / "explicit-run"
+    environment_run = runs_directory / "environment-run"
+    for path in (observation_run, resolved_run, explicit_run, environment_run):
+        path.mkdir(parents=True)
+
+    update_latest_run(runs_directory, observation_run, stage="observation")
+    update_latest_run(runs_directory, resolved_run, stage="resolved")
+    registry = load_latest_runs(runs_directory)
+    assert registry["latest_observation_run"] == "observation-run"
+    assert registry["latest_resolved_run"] == "resolved-run"
+    assert resolve_run_directory(runs_directory, stage="observation") == observation_run
+    assert resolve_run_directory(runs_directory, stage="resolved") == resolved_run
+
+    monkeypatch.setenv("PERSON_TRACKER_RUN_DIRECTORY", str(environment_run))
+    assert resolve_run_directory(runs_directory, stage="resolved") == environment_run
+    assert resolve_run_directory(
+        runs_directory, stage="resolved", explicit=explicit_run
+    ) == explicit_run

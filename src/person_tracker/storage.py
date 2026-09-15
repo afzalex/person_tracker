@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
@@ -14,6 +15,89 @@ from .face import FaceSample
 
 
 OBSERVATION_SCHEMA_VERSION = 1
+LATEST_RUNS_FILENAME = "latest.json"
+LATEST_RUN_KEYS = {
+    "observation": "latest_observation_run",
+    "resolved": "latest_resolved_run",
+}
+
+
+def load_latest_runs(runs_directory: str | Path) -> dict[str, Any]:
+    """Load the portable latest-run registry, returning an empty registry if absent."""
+    path = Path(runs_directory).expanduser().resolve() / LATEST_RUNS_FILENAME
+    if not path.exists():
+        return {}
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"Latest-run registry must contain a JSON object: {path}")
+    return payload
+
+
+def update_latest_run(
+    runs_directory: str | Path,
+    run_directory: str | Path,
+    *,
+    stage: str,
+) -> Path:
+    """Atomically update the observation or resolved pointer in ``runs/latest.json``."""
+    if stage not in LATEST_RUN_KEYS:
+        raise ValueError(f"Unknown run stage {stage!r}; expected one of {sorted(LATEST_RUN_KEYS)}")
+
+    runs_dir = Path(runs_directory).expanduser().resolve()
+    run_dir = Path(run_directory).expanduser().resolve()
+    try:
+        relative_run = run_dir.relative_to(runs_dir)
+    except ValueError as error:
+        raise ValueError(f"Run directory must be inside {runs_dir}: {run_dir}") from error
+    if relative_run == Path("."):
+        raise ValueError("Run directory cannot be the runs directory itself")
+
+    runs_dir.mkdir(parents=True, exist_ok=True)
+    registry = load_latest_runs(runs_dir)
+    registry[LATEST_RUN_KEYS[stage]] = relative_run.as_posix()
+    registry["updated_at"] = datetime.now(timezone.utc).isoformat()
+
+    path = runs_dir / LATEST_RUNS_FILENAME
+    temporary_path = path.with_suffix(path.suffix + ".tmp")
+    _write_json(temporary_path, registry)
+    temporary_path.replace(path)
+    return path
+
+
+def resolve_run_directory(
+    runs_directory: str | Path,
+    *,
+    stage: str,
+    explicit: str | Path | None = None,
+    environment_variable: str = "PERSON_TRACKER_RUN_DIRECTORY",
+) -> Path:
+    """Resolve an explicit, environment-provided, or latest compatible run."""
+    if stage not in LATEST_RUN_KEYS:
+        raise ValueError(f"Unknown run stage {stage!r}; expected one of {sorted(LATEST_RUN_KEYS)}")
+
+    runs_dir = Path(runs_directory).expanduser().resolve()
+    candidate = explicit
+    source = "explicit override"
+    if candidate is None:
+        candidate = os.environ.get(environment_variable)
+        source = f"environment variable {environment_variable}"
+    if candidate is None:
+        registry = load_latest_runs(runs_dir)
+        candidate = registry.get(LATEST_RUN_KEYS[stage])
+        source = f"{runs_dir / LATEST_RUNS_FILENAME} ({LATEST_RUN_KEYS[stage]})"
+    if candidate is None:
+        raise FileNotFoundError(
+            f"No {stage} run was provided and no latest pointer exists in "
+            f"{runs_dir / LATEST_RUNS_FILENAME}"
+        )
+
+    path = Path(candidate).expanduser()
+    if not path.is_absolute():
+        path = runs_dir / path
+    path = path.resolve()
+    if not path.is_dir():
+        raise FileNotFoundError(f"Run directory from {source} does not exist: {path}")
+    return path
 
 
 def _json_default(value: Any) -> Any:

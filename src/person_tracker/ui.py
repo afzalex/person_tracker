@@ -43,6 +43,7 @@ def create_person_selection_widget(
     *,
     selection_path=None,
     initial_person_id=None,
+    fps=None,
     columns=5,
     card_width=180,
     image_height=140,
@@ -86,6 +87,14 @@ def create_person_selection_widget(
         samples = person_galleries[person_id]
         best = max(samples, key=lambda sample: sample.quality)
         stats = person_stats[person_id]
+        duration = stats.get("duration")
+        if duration is None:
+            if fps is None:
+                raise ValueError("fps is required when person_stats has no duration")
+            duration = len(stats.get("frames", ())) / float(fps)
+        track_count = stats.get("track_count")
+        if track_count is None:
+            track_count = len(stats.get("tracks", ()))
         h, w = best.image.shape[:2]
         scale = image_height / max(h, 1)
         image = cv2.resize(best.image, (max(1, int(w * scale)), image_height))
@@ -103,8 +112,8 @@ def create_person_selection_widget(
         info = widgets.HTML(
             f"<div style='text-align:left; line-height:1.5'>"
             f"<b>Person {person_id}</b><br>"
-            f"Visible: {format_duration(stats['duration'])}<br>"
-            f"Tracks: {stats['track_count']}<br>"
+            f"Visible: {format_duration(duration)}<br>"
+            f"Tracks: {track_count}<br>"
             f"Faces: {len(samples)}<br>Quality: {best.quality:.2f}</div>"
         )
         button = widgets.Button(
@@ -275,4 +284,3 @@ async def select_person_widget(
     display(grid, status)
 
     return await future
-

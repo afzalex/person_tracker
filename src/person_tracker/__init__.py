@@ -14,9 +14,12 @@ from .identity import (
 from .io import create_browser_preview, ffmpeg_available, inspect_video, read_nth_frame
 from .storage import (
     build_run_manifest,
+    load_latest_runs,
     load_observation_run,
+    resolve_run_directory,
     save_identity_resolution,
     save_observation_run,
+    update_latest_run,
 )
 from .ui import (
     create_frame_canvas,
@@ -48,9 +51,12 @@ __all__ = [
     "inspect_video",
     "read_nth_frame",
     "build_run_manifest",
+    "load_latest_runs",
     "load_observation_run",
+    "resolve_run_directory",
     "save_identity_resolution",
     "save_observation_run",
+    "update_latest_run",
     "create_frame_canvas",
     "create_person_selection_widget",
     "load_selected_person",
