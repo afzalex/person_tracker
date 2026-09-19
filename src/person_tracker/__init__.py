@@ -12,6 +12,23 @@ from .identity import (
     split_track_identity_anchors,
 )
 from .io import create_browser_preview, ffmpeg_available, inspect_video, read_nth_frame
+from .scene_detection import (
+    SceneCut,
+    build_scene_records,
+    combine_scene_cuts,
+    create_scene_review_video,
+    create_selected_scene_review_video,
+    detect_scene_cuts,
+    extract_scene_clips,
+    resolve_scene_window,
+)
+from .scene_storage import (
+    SceneRecord,
+    build_scene_manifest,
+    load_scene_run,
+    save_scene_run,
+    validate_scenes,
+)
 from .storage import (
     build_run_manifest,
     load_latest_runs,
@@ -50,6 +67,19 @@ __all__ = [
     "ffmpeg_available",
     "inspect_video",
     "read_nth_frame",
+    "SceneCut",
+    "SceneRecord",
+    "build_scene_records",
+    "combine_scene_cuts",
+    "create_scene_review_video",
+    "create_selected_scene_review_video",
+    "detect_scene_cuts",
+    "extract_scene_clips",
+    "resolve_scene_window",
+    "build_scene_manifest",
+    "load_scene_run",
+    "save_scene_run",
+    "validate_scenes",
     "build_run_manifest",
     "load_latest_runs",
     "load_observation_run",

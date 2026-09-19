@@ -17,6 +17,7 @@ from .face import FaceSample
 OBSERVATION_SCHEMA_VERSION = 1
 LATEST_RUNS_FILENAME = "latest.json"
 LATEST_RUN_KEYS = {
+    "scene": "latest_scene_run",
     "observation": "latest_observation_run",
     "resolved": "latest_resolved_run",
 }
